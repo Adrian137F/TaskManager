@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskManager Pro - Gestor de Tareas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #2c3e50, #34495e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .task-form {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .task-form h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2c3e50;
+            box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #2c3e50, #34495e);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(44, 62, 80, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(44, 62, 80, 0.4);
+        }
+
+        .task-list {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .task-list h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .task-item {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #2c3e50;
+            transition: all 0.3s ease;
+        }
+
+        .task-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .task-item.completed {
+            opacity: 0.7;
+            border-left-color: #28a745;
+        }
+
+        .task-item.completed .task-title {
+            text-decoration: line-through;
+        }
+
+        .task-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .task-description {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .task-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9em;
+            color: #888;
+        }
+
+        .priority-high {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        .priority-medium {
+            color: #ffc107;
+            font-weight: 600;
+        }
+
+        .priority-low {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 5px 15px;
+            font-size: 14px;
+            border-radius: 15px;
+        }
+
+        .btn-complete {
+            background: linear-gradient(45deg, #28a745, #20c997);
+        }
+
+        .btn-delete {
+            background: linear-gradient(45deg, #dc3545, #fd7e14);
+        }
+
+        .stats {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .stats h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(45deg, #2c3e50, #34495e);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(44, 62, 80, 0.3);
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .cloud-services {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .cloud-services h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .cloud-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .cloud-link {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .cloud-link:hover {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .cloud-icon {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+            border-radius: 5px;
+        }
+
+        .no-tasks {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            margin: 40px 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            .task-form,
+            .task-list,
+            .stats,
+            .cloud-services {
+                padding: 20px;
+            }
+            
+            .cloud-links {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.5em;
+            }
+            
+            .task-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            
+            .task-actions {
+                margin-top: 10px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>TaskManager Pro</h1>
+            <p>Gestiona tus tareas de manera eficiente y productiva</p>
+        </div>
+
+        <div class="stats">
+            <h2>📊 Estadísticas</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalTasks">0</div>
+                    <div class="stat-label">Total</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="completedTasks">0</div>
+                    <div class="stat-label">Completadas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="pendingTasks">0</div>
+                    <div class="stat-label">Pendientes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="highPriorityTasks">0</div>
+                    <div class="stat-label">Alta Prioridad</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="task-form">
+                <h2>➕ Agregar Nueva Tarea</h2>
+                <form id="taskForm">
+                    <div class="form-group">
+                        <label for="taskTitle">Título de la Tarea:</label>
+                        <input type="text" id="taskTitle" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskDescription">Descripción:</label>
+                        <textarea id="taskDescription" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskPriority">Prioridad:</label>
+                        <select id="taskPriority" name="priority">
+                            <option value="low">Baja</option>
+                            <option value="medium">Media</option>
+                            <option value="high">Alta</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskDueDate">Fecha de Vencimiento:</label>
+                        <input type="date" id="taskDueDate" name="dueDate">
+                    </div>
+                    <button type="submit" class="btn">Agregar Tarea</button>
+                </form>
+            </div>
+
+            <div class="task-list">
+                <h2>📋 Mis Tareas</h2>
+                <div id="taskContainer">
+                    <div class="no-tasks">
+                        No hay tareas aún. ¡Agrega tu primera tarea!
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cloud-services">
+            <h2>☁️ Servicios en la Nube</h2>
+            <div class="cloud-links">
+                <a href="https://aws.amazon.com" target="_blank" class="cloud-link">
+                    <div class="cloud-icon" style="background: #FF9900;">🔶</div>
+                    <div>
+                        <strong>Amazon Web Services</strong><br>
+                        <small>Servicios de infraestructura</small>
+                    </div>
+                </a>
+                <a href="https://cloud.google.com" target="_blank" class="cloud-link">
+                    <div class="cloud-icon" style="background: #4285f4;">🔷</div>
+                    <div>
+                        <strong>Google Cloud Platform</strong><br>
+                        <small>Computación en la nube</small>
+                    </div>
+                </a>
+                <a href="https://azure.microsoft.com" target="_blank" class="cloud-link">
+                    <div class="cloud-icon" style="background: #0078d4;">🔹</div>
+                    <div>
+                        <strong>Microsoft Azure</strong><br>
+                        <small>Servicios cloud empresariales</small>
+                    </div>
+                </a>
+                <a href="https://www.heroku.com" target="_blank" class="cloud-link">
+                    <div class="cloud-icon" style="background: #430098;">🟣</div>
+                    <div>
+                        <strong>Heroku</strong><br>
+                        <small>Plataforma como servicio</small>
+                    </div>
+                </a>
+                <a href="https://www.digitalocean.com" target="_blank" class="cloud-link">
+                    <div class="cloud-icon" style="background: #0080ff;">🌊</div>
+                    <div>
+                        <strong>DigitalOcean</strong><br>
+                        <small>Hosting y desarrollo</small>
+                    </div>
+                </a>
+                <a href="https://firebase.google.com" target="_blank" class="cloud-link">
+                    <div class="cloud-icon" style="background: #ffca28;">🔥</div>
+                    <div>
+                        <strong>Firebase</strong><br>
+                        <small>Base de datos en tiempo real</small>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulación de base de datos en memoria
+        let tasks = [];
+        let taskIdCounter = 1;
+
+        // Elementos del DOM
+        const taskForm = document.getElementById('taskForm');
+        const taskContainer = document.getElementById('taskContainer');
+        const totalTasksSpan = document.getElementById('totalTasks');
+        const completedTasksSpan = document.getElementById('completedTasks');
+        const pendingTasksSpan = document.getElementById('pendingTasks');
+        const highPriorityTasksSpan = document.getElementById('highPriorityTasks');
+
+        // Cargar datos del localStorage al iniciar
+        function loadTasks() {
+            const savedTasks = localStorage.getItem('tasks');
+            if (savedTasks) {
+                tasks = JSON.parse(savedTasks);
+                if (tasks.length > 0) {
+                    taskIdCounter = Math.max(...tasks.map(task => task.id)) + 1;
+                }
+            }
+            renderTasks();
+            updateStats();
+        }
+
+        // Guardar datos en localStorage
+        function saveTasks() {
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+
+        // Agregar nueva tarea
+        taskForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(taskForm);
+            const task = {
+                id: taskIdCounter++,
+                title: formData.get('title'),
+                description: formData.get('description'),
+                priority: formData.get('priority'),
+                dueDate: formData.get('dueDate'),
+                completed: false,
+                createdAt: new Date().toISOString()
+            };
+            
+            tasks.push(task);
+            saveTasks();
+            renderTasks();
+            updateStats();
+            taskForm.reset();
+            
+            // Animación de éxito
+            showNotification('Tarea agregada exitosamente!', 'success');
+        });
+
+        // Renderizar tareas
+        function renderTasks() {
+            if (tasks.length === 0) {
+                taskContainer.innerHTML = '<div class="no-tasks">No hay tareas aún. ¡Agrega tu primera tarea!</div>';
+                return;
+            }
+
+            taskContainer.innerHTML = tasks.map(task => `
+                <div class="task-item ${task.completed ? 'completed' : ''}">
+                    <div class="task-title">${task.title}</div>
+                    <div class="task-description">${task.description || 'Sin descripción'}</div>
+                    <div class="task-meta">
+                        <div>
+                            <span class="priority-${task.priority}">
+                                ${task.priority === 'high' ? '🔴 Alta' : task.priority === 'medium' ? '🟡 Media' : '🟢 Baja'}
+                            </span>
+                            ${task.dueDate ? `| 📅 ${new Date(task.dueDate).toLocaleDateString()}` : ''}
+                        </div>
+                        <div class="task-actions">
+                            <button class="btn btn-small btn-complete" onclick="toggleTask(${task.id})">
+                                ${task.completed ? '↩️' : '✅'}
+                            </button>
+                            <button class="btn btn-small btn-delete" onclick="deleteTask(${task.id})">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Alternar estado de tarea
+        function toggleTask(id) {
+            const task = tasks.find(task => task.id === id);
+            if (task) {
+                task.completed = !task.completed;
+                saveTasks();
+                renderTasks();
+                updateStats();
+                showNotification(task.completed ? 'Tarea completada!' : 'Tarea marcada como pendiente', 'info');
+            }
+        }
+
+        // Eliminar tarea
+        function deleteTask(id) {
+            if (confirm('¿Estás seguro de que quieres eliminar esta tarea?')) {
+                tasks = tasks.filter(task => task.id !== id);
+                saveTasks();
+                renderTasks();
+                updateStats();
+                showNotification('Tarea eliminada', 'warning');
+            }
+        }
+
+        // Actualizar estadísticas
+        function updateStats() {
+            const total = tasks.length;
+            const completed = tasks.filter(task => task.completed).length;
+            const pending = total - completed;
+            const highPriority = tasks.filter(task => task.priority === 'high' && !task.completed).length;
+
+            totalTasksSpan.textContent = total;
+            completedTasksSpan.textContent = completed;
+            pendingTasksSpan.textContent = pending;
+            highPriorityTasksSpan.textContent = highPriority;
+        }
+
+        // Sistema de notificaciones
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                background: ${type === 'success' ? '#28a745' : type === 'warning' ? '#ffc107' : '#17a2b8'};
+                color: white;
+                border-radius: 10px;
+                z-index: 1000;
+                font-weight: 600;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+                transform: translateX(400px);
+                transition: transform 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(400px)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Inicializar aplicación
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTasks();
+            
+            // Datos de ejemplo para demostrar funcionalidad
+            if (tasks.length === 0) {
+                tasks = [
+                    {
+                        id: 1,
+                        title: "Completar proyecto de la universidad",
+                        description: "Terminar el desarrollo de la aplicación web para la clase de programación",
+                        priority: "high",
+                        dueDate: "2025-07-20",
+                        completed: false,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 2,
+                        title: "Revisar documentación de Render",
+                        description: "Estudiar cómo desplegar aplicaciones en Render",
+                        priority: "medium",
+                        dueDate: "2025-07-18",
+                        completed: true,
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+                taskIdCounter = 3;
+                saveTasks();
+                renderTasks();
+                updateStats();
+            }
+        });
+    </script>
+</body>
+</html>
